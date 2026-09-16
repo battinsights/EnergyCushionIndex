@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EPRINC Oil and Gas Cushion Index</title>
+<style>
+  :root{
+    --navy:#1F3A5F;
+    --orange:#B4590E;
+    --yellow:#8A6D00;
+    --brick:#8C2318;
+    --olive:#4A6B2A;
+    --ink:#1A1A1A;
+    --muted:#5A5A5A;
+    --rule:#C9C9C9;
+    --rule-strong:#1F3A5F;
+    --bg:#FFFFFF;
+    --tint:#F6F5F2;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Times New Roman",Times,serif;
+    font-size:17px;
+    line-height:1.55;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:48px 24px 72px}
+
+  /* masthead */
+  .masthead{border-bottom:2px solid var(--rule-strong);padding-bottom:14px}
+  h1{
+    font-size:35px;font-weight:700;color:var(--navy);
+    margin:0;letter-spacing:-.01em;line-height:1.15;
+  }
+  .stamp{
+    display:flex;flex-wrap:wrap;gap:6px 28px;
+    margin-top:10px;font-size:14px;color:var(--muted);
+  }
+  .stamp a{color:var(--navy)}
+
+  .lede{
+    margin:20px 0 0;max-width:62ch;font-size:18px;line-height:1.6;
+  }
+
+  /* hero */
+  .hero{
+    display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);
+    gap:32px;align-items:center;
+    margin:34px 0 0;padding:26px 0;
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  }
+  .score{
+    font-size:84px;line-height:.85;font-weight:400;color:var(--navy);
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  }
+  .band{
+    display:inline-block;margin-top:12px;
+    font-size:19px;font-weight:700;
+  }
+  .change{margin:8px 0 0;font-size:15px;color:var(--muted);line-height:1.45}
+  .trend{width:100%}
+  .trend-foot{
+    display:flex;justify-content:space-between;
+    font-size:13px;color:var(--muted);margin-top:4px;
+  }
+
+  /* sub-indices */
+  .subs{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border-bottom:1px solid var(--rule);
+  }
+  .sub{padding:18px 0}
+  .sub:first-child{border-right:1px solid var(--rule);padding-right:24px}
+  .sub:last-child{padding-left:24px}
+  .sub-name{font-size:15px;color:var(--muted)}
+  .sub-val{
+    font-size:30px;font-variant-numeric:tabular-nums;color:var(--navy);
+    margin-top:2px;
+  }
+  .sub-band{font-size:16px;font-weight:700;margin-left:8px}
+
+  /* narrative */
+  .moved{padding:22px 0;border-bottom:1px solid var(--rule)}
+  .moved h2{
+    font-size:17px;margin:0 0 6px;font-weight:700;color:var(--navy);
+  }
+  .moved p{margin:0;max-width:64ch}
+
+  /* components */
+  h2.sec{
+    font-size:17px;font-weight:700;color:var(--navy);
+    margin:28px 0 4px;
+  }
+  .group-label{
+    font-size:14px;color:var(--muted);
+    margin:18px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--rule);
+  }
+  .comp{
+    display:grid;grid-template-columns:minmax(0,1fr) 120px 52px;
+    gap:16px;align-items:center;
+    padding:11px 0;border-bottom:1px solid #EAEAEA;
+  }
+  .comp-name{font-size:16px}
+  .comp-weight{font-size:13px;color:var(--muted)}
+  .track{height:7px;background:#ECECEC}
+  .fill{height:7px}
+  .comp-score{
+    text-align:right;font-size:18px;font-variant-numeric:tabular-nums;
+  }
+  .flag{
+    display:inline-block;margin-left:7px;font-size:12.5px;
+    color:var(--yellow);border-bottom:1px dotted var(--yellow);
+    cursor:help;
+  }
+
+  /* bands key */
+  .key{
+    display:flex;flex-wrap:wrap;gap:10px 22px;
+    margin-top:16px;font-size:14px;color:var(--muted);
+  }
+  .key span{display:flex;align-items:center;gap:7px}
+  .chip{width:11px;height:11px;flex:none}
+
+  /* notes */
+  .notes{margin-top:34px;border-top:2px solid var(--rule-strong);padding-top:20px}
+  .note{margin:0 0 14px;font-size:14.5px;color:var(--muted);max-width:70ch;line-height:1.6}
+  .note strong{color:var(--ink);font-weight:700}
+  a{color:var(--navy)}
+  a:focus-visible,.flag:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+  @media (max-width:640px){
+    .wrap{padding:30px 18px 56px}
+    h1{font-size:27px}
+    .hero{grid-template-columns:1fr;gap:20px;text-align:left}
+    .score{font-size:68px}
+    .subs{grid-template-columns:1fr}
+    .sub:first-child{border-right:0;border-bottom:1px solid var(--rule);padding-right:0}
+    .sub:last-child{padding-left:0}
+    .comp{grid-template-columns:minmax(0,1fr) 52px;gap:10px}
+    .comp .track{grid-column:1 / -1;order:3}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>EPRINC Oil and Gas Cushion Index</h1>
+    <div class="stamp">
+      <span id="asof">Loading</span>
+      <span id="version"></span>
+      <span><a href="data/history.csv">Download data</a></span>
+      <span><a href="methodology.pdf">Methodology</a></span>
+    </div>
+  </header>
+
+  <p class="lede">How much physical buffer the United States and global oil and
+  natural gas system holds against an unexpected supply loss. Higher means more
+  slack. Fifty is the level defined as physically adequate.</p>
+
+  <section class="hero">
+    <div>
+      <div class="score" id="score">&nbsp;</div>
+      <div class="band" id="band"></div>
+      <p class="change" id="change"></p>
+    </div>
+    <div>
+      <svg id="spark" class="trend" viewBox="0 0 560 120" preserveAspectRatio="none"
+           height="120" role="img" aria-labelledby="sparkTitle sparkDesc">
+        <title id="sparkTitle">Index over the last 24 months</title>
+        <desc id="sparkDesc">Trend line of the headline score.</desc>
+      </svg>
+      <div class="trend-foot"><span id="sparkStart"></span><span id="sparkEnd"></span></div>
+    </div>
+  </section>
+
+  <section class="subs">
+    <div class="sub">
+      <div class="sub-name">Oil cushion, half the index</div>
+      <div><span class="sub-val" id="oilVal"></span><span class="sub-band" id="oilBand"></span></div>
+    </div>
+    <div class="sub">
+      <div class="sub-name">Gas cushion, half the index</div>
+      <div><span class="sub-val" id="gasVal"></span><span class="sub-band" id="gasBand"></span></div>
+    </div>
+  </section>
+
+  <section class="moved">
+    <h2>What moved it</h2>
+    <p id="narrative"></p>
+  </section>
+
+  <h2 class="sec">Components</h2>
+  <div id="components"></div>
+
+  <div class="key" id="key"></div>
+
+  <section class="notes" id="notes"></section>
+
+</div>
+
+<script>
+const BANDS = [
+  {name:"Strained",   min:0,  max:25,  color:"#8C2318"},
+  {name:"Tight",      min:25, max:40,  color:"#B4590E"},
+  {name:"Adequate",   min:40, max:60,  color:"#1F3A5F"},
+  {name:"Comfortable",min:60, max:100, color:"#4A6B2A"},
+];
+const colorFor = s => (BANDS.find(b => s >= b.min && (b.max===100 ? s<=100 : s<b.max)) || BANDS[0]).color;
+
+const GROUPS = [
+  {label:"Gas cushion", items:[
+    {key:"storage_adequacy",  name:"Gas storage adequacy",   weight:"25 percent of the index"},
+    {key:"uncommitted_share", name:"Uncommitted supply share",weight:"25 percent of the index"},
+  ]},
+  {label:"Oil cushion", items:[
+    {key:"spare_capacity",  name:"Global spare capacity", weight:"16.7 percent of the index"},
+    {key:"inventory_cover", name:"Oil inventory cover",   weight:"16.7 percent of the index"},
+    {key:"refining",        name:"Refining headroom",     weight:"16.7 percent of the index"},
+  ]},
+];
+
+const MONTHS = ["January","February","March","April","May","June","July",
+                "August","September","October","November","December"];
+function niceMonth(ym){
+  const [y,m] = ym.split("-").map(Number);
+  return MONTHS[m-1] + " " + y;
+}
+
+function drawSpark(points){
+  const svg = document.getElementById("spark");
+  if(!points.length) return;
+  const W=560,H=120,pad=10;
+  const vals = points.map(p=>p.score);
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  const span = (hi-lo) || 1;
+  const x = i => (i/(points.length-1))*(W-2*pad)+pad;
+  const y = v => H-pad-((v-lo)/span)*(H-2*pad);
+
+  // adequate threshold reference at 40, only if in view
+  let ref = "";
+  if(lo <= 40 && hi >= 40){
+    ref = `<line x1="0" y1="${y(40)}" x2="${W}" y2="${y(40)}"
+            stroke="#C9C9C9" stroke-width="1" stroke-dasharray="4 4"/>`;
+  }
+  const d = points.map((p,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(p.score).toFixed(1)}`).join("");
+  const last = points[points.length-1];
+  svg.innerHTML = svg.innerHTML + ref +
+    `<path d="${d}" fill="none" stroke="${colorFor(last.score)}" stroke-width="2.5"
+           stroke-linejoin="round" stroke-linecap="round"/>` +
+    `<circle cx="${x(points.length-1).toFixed(1)}" cy="${y(last.score).toFixed(1)}"
+             r="4.5" fill="${colorFor(last.score)}"/>`;
+  document.getElementById("sparkStart").textContent = niceMonth(points[0].date);
+  document.getElementById("sparkEnd").textContent   = niceMonth(last.date);
+}
+
+function render(d){
+  const h = d.headline;
+  document.getElementById("score").textContent = h.score.toFixed(1);
+  const bandEl = document.getElementById("band");
+  bandEl.textContent = h.band;
+  bandEl.style.color = colorFor(h.score);
+
+  document.getElementById("asof").textContent = "Data through " + niceMonth(d.as_of.slice(0,7));
+  document.getElementById("version").textContent = "Methodology version " + d.methodology_version;
+
+  // change language, computed from the series rather than asserted
+  const sp = d.sparkline || [];
+  if(sp.length > 1){
+    const first = sp[0], prev = sp[sp.length-2];
+    const dWeek = h.score - prev.score;
+    const dir = dWeek < 0 ? "down" : dWeek > 0 ? "up" : "unchanged";
+    const mag = Math.abs(dWeek).toFixed(1);
+    let txt = dir === "unchanged"
+      ? "Unchanged from the previous month."
+      : `${dir.charAt(0).toUpperCase()+dir.slice(1)} ${mag} from the previous month,`;
+    if(dir === "unchanged"){
+      txt += ` It stood at ${first.score.toFixed(0)} in ${niceMonth(first.date)}.`;
+    } else {
+      const long = h.score < first.score ? "down" : "up";
+      txt += ` and ${long} from ${first.score.toFixed(0)} in ${niceMonth(first.date)}.`;
+    }
+    document.getElementById("change").textContent = txt;
+  }
+  drawSpark(sp);
+
+  const oil = d.sub_indices.oil, gas = d.sub_indices.gas;
+  document.getElementById("oilVal").textContent = oil.score.toFixed(1);
+  document.getElementById("gasVal").textContent = gas.score.toFixed(1);
+  const ob = document.getElementById("oilBand"), gb = document.getElementById("gasBand");
+  ob.textContent = oil.band; ob.style.color = colorFor(oil.score);
+  gb.textContent = gas.band; gb.style.color = colorFor(gas.score);
+
+  document.getElementById("narrative").textContent = d.narrative;
+
+  // components, worst first inside each group
+  const host = document.getElementById("components");
+  const lags = d.component_lags || {};
+  GROUPS.forEach(g => {
+    const lab = document.createElement("div");
+    lab.className = "group-label";
+    lab.textContent = g.label;
+    host.appendChild(lab);
+
+    g.items
+      .map(it => ({...it, score: d.components[it.key]}))
+      .filter(it => it.score !== null && it.score !== undefined)
+      .sort((a,b) => a.score - b.score)
+      .forEach(it => {
+        const row = document.createElement("div");
+        row.className = "comp";
+
+        const lag = lags[it.key];
+        const flag = lag
+          ? `<span class="flag" tabindex="0" title="Source data runs to ${niceMonth(lag.last_observed)}. ${lag.months_carried_forward} months carried forward from ${lag.source}.">carried forward</span>`
+          : "";
+
+        row.innerHTML =
+          `<div><div class="comp-name">${it.name}${flag}</div>
+                <div class="comp-weight">${it.weight}</div></div>
+           <div class="track"><div class="fill" style="width:${Math.max(it.score,0.6)}%;
+                background:${colorFor(it.score)}"></div></div>
+           <div class="comp-score">${it.score.toFixed(1)}</div>`;
+        host.appendChild(row);
+      });
+  });
+
+  // band key
+  document.getElementById("key").innerHTML = BANDS.map(b =>
+    `<span><i class="chip" style="background:${b.color}"></i>${b.name} ${b.min} to ${b.max}</span>`
+  ).join("");
+
+  // notes, including the contextual note the methodology commits to
+  const notes = [];
+  if(d.components.spare_capacity !== null && d.components.spare_capacity < 10){
+    notes.push(`<strong>On the spare capacity reading.</strong> This component
+      scores near zero when OPEC production has risen close to capacity, which
+      happens as agreed production cuts are unwound. The physical ability to
+      produce has not disappeared. What has disappeared is output that could be
+      brought online quickly to offset a disruption elsewhere, which is the
+      buffer this index measures.`);
+  }
+  Object.entries(lags).forEach(([k, v]) => {
+    const nm = GROUPS.flatMap(g=>g.items).find(i=>i.key===k);
+    notes.push(`<strong>Reporting lag.</strong> ${nm ? nm.name : k} draws on the
+      ${v.source}, which publishes later than the weekly petroleum series. The
+      most recent observation is ${niceMonth(v.last_observed)}, carried forward
+      ${v.months_carried_forward} months. This component is a trailing twelve
+      month structural measure, so carrying it forward changes it very little.`);
+  });
+  if(d.stale && d.failed_series && d.failed_series.length){
+    notes.push(`<strong>Incomplete data.</strong> ${d.failed_series.length}
+      series did not return on the most recent run. Affected components hold
+      their previous values.`);
+  }
+  notes.push(`Sources are the EIA Weekly Natural Gas Storage Report, Weekly
+    Petroleum Status Report, Natural Gas Monthly, and Short Term Energy Outlook.
+    Every input is public and every transformation is published, so the index
+    can be rebuilt independently.`);
+  notes.push(`The index measures physical system conditions. It does not
+    evaluate whether any particular use of oil or natural gas is preferable.`);
+  document.getElementById("notes").innerHTML =
+    notes.map(n => `<p class="note">${n}</p>`).join("");
+}
+
+fetch("data/index.json", {cache:"no-store"})
+  .then(r => { if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(render)
+  .catch(() => {
+    document.getElementById("score").textContent = "--";
+    document.getElementById("change").textContent =
+      "Index data could not be loaded. Run build_index.py to generate data/index.json.";
+  });
+</script>
+</body>
+</html>

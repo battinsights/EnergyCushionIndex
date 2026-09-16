@@ -1,0 +1,97 @@
+name: Build index
+
+# Thursday publication, after the Weekly Natural Gas Storage Report.
+#
+# GitHub Actions cron is UTC and does not observe daylight saving, so the
+# target of 11:30 ET needs two entries. The job checks the actual Eastern
+# time at runtime and exits early if it is the wrong one for the season,
+# so exactly one of these takes effect in any given week.
+#
+# Actions cron is also best effort and can run late under load. The
+# schedule is set early and the job verifies that the storage report has
+# actually landed before it publishes, rather than trusting the clock.
+on:
+  schedule:
+    - cron: "30 15 * * 4"   # 11:30 ET during daylight saving
+    - cron: "30 16 * * 4"   # 11:30 ET during standard time
+  workflow_dispatch:         # allows a manual run from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Confirm this is the right run for the season
+        if: github.event_name == 'schedule'
+        run: |
+          HOUR=$(TZ=America/New_York date +%H)
+          MINUTE=$(TZ=America/New_York date +%M)
+          echo "Eastern time is ${HOUR}:${MINUTE}"
+          if [ "$HOUR" != "11" ]; then
+            echo "Not 11:00 ET in New York, so this is the off season cron entry. Exiting."
+            exit 78
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests pandas numpy
+
+      - name: Build the index
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+        run: python build_index.py
+
+      - name: Report what was produced
+        run: |
+          echo "Headline and freshness from this run:"
+          python - <<'PY'
+          import json
+          d = json.load(open("data/index.json"))
+          print("  as of      ", d["as_of"])
+          print("  headline   ", d["headline"]["score"], d["headline"]["band"])
+          print("  oil        ", d["sub_indices"]["oil"]["score"])
+          print("  gas        ", d["sub_indices"]["gas"]["score"])
+          if d.get("failed_series"):
+              print("  FAILED SERIES:", d["failed_series"])
+          if d.get("component_lags"):
+              for k, v in d["component_lags"].items():
+                  print(f"  lag: {k} carried forward {v['months_carried_forward']} months")
+          PY
+
+      - name: Fail the run if any series did not return
+        run: |
+          python - <<'PY'
+          import json, sys
+          d = json.load(open("data/index.json"))
+          failed = d.get("failed_series") or []
+          if failed:
+              print(f"{len(failed)} series failed: {failed}")
+              print("The index was still written using carried forward values, "
+                    "but this run is marked failed so the problem is visible "
+                    "rather than silently published.")
+              sys.exit(1)
+          PY
+
+      - name: Commit the new values
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/index.json data/history.csv
+          if git diff --staged --quiet; then
+            echo "No change in the data, nothing to commit."
+          else
+            AS_OF=$(python -c "import json;print(json.load(open('data/index.json'))['as_of'])")
+            SCORE=$(python -c "import json;print(json.load(open('data/index.json'))['headline']['score'])")
+            git commit -m "Index ${SCORE} as of ${AS_OF}"
+            git push
+          fi
