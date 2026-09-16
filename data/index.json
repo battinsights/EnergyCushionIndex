@@ -1,41 +1,29 @@
 {
-  "generated_at": "2026-09-16T19:33:04.634915+00:00",
-  "as_of": "2026-06-01",
+  "generated_at": "2026-09-16T19:38:24.946617+00:00",
+  "as_of": "2026-09-01",
   "methodology_version": "1.3",
   "headline": {
-    "score": 35.1,
+    "score": 33.1,
     "band": "Tight"
   },
   "sub_indices": {
     "oil": {
-      "score": 19.1,
+      "score": 16.6,
       "band": "Strained"
     },
     "gas": {
-      "score": 51.0,
+      "score": 49.5,
       "band": "Adequate"
     }
   },
   "components": {
     "spare_capacity": 0.5,
-    "inventory_cover": 26.9,
-    "refining": 30.0,
-    "storage_adequacy": 56.8,
-    "uncommitted_share": 45.2
+    "inventory_cover": 20.7,
+    "refining": 28.7,
+    "storage_adequacy": 55.8,
+    "uncommitted_share": 43.2
   },
   "sparkline": [
-    {
-      "date": "2024-07",
-      "score": 57.4
-    },
-    {
-      "date": "2024-08",
-      "score": 54.0
-    },
-    {
-      "date": "2024-09",
-      "score": 53.2
-    },
     {
       "date": "2024-10",
       "score": 50.7
@@ -119,9 +107,28 @@
     {
       "date": "2026-06",
       "score": 35.1
+    },
+    {
+      "date": "2026-07",
+      "score": 34.4
+    },
+    {
+      "date": "2026-08",
+      "score": 33.7
+    },
+    {
+      "date": "2026-09",
+      "score": 33.1
     }
   ],
   "narrative": "Oil inventory cover fell 1.8 points. Gas storage adequacy fell 1.5 points.",
   "failed_series": [],
-  "stale": false
+  "stale": false,
+  "component_lags": {
+    "uncommitted_share": {
+      "last_observed": "2026-06",
+      "months_carried_forward": 3,
+      "source": "Natural Gas Monthly"
+    }
+  }
 }

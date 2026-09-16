@@ -210,6 +210,37 @@ def build_dataframe(raw, weekly_storage, cfg):
     w = cfg["weights"]
     ladders = cfg["ladders"]
 
+    # -- structural lag handling --
+    # Some sources publish on a structurally later schedule than others.
+    # The gas balance series (Natural Gas Monthly) run roughly three months
+    # behind the weekly petroleum series. This is a permanent feature of the
+    # source, not an outage, so it is handled separately from the stale-data
+    # rule in methodology Section 7.
+    #
+    # Affected components are carried forward and marked at the component
+    # level, so the reader sees which specific input is lagging rather than
+    # the whole index being flagged stale. Carry-forward is acceptable here
+    # because uncommitted supply share is a trailing twelve month structural
+    # measure: repeating a few months inside a twelve month window moves it
+    # very little, which is why it was chosen over the volatile margin ratio.
+    lag_info = {}
+    gas_balance = ["gas_production", "gas_pipe_imports",
+                   "gas_pipe_exports", "gas_lng_exports"]
+    present = [c for c in gas_balance if c in df.columns]
+    if present:
+        last_obs = min(df[c].last_valid_index() for c in present)
+        overall_last = df.index.max()
+        if last_obs is not None and overall_last is not None and last_obs < overall_last:
+            months = ((overall_last.year - last_obs.year) * 12
+                      + overall_last.month - last_obs.month)
+            lag_info["uncommitted_share"] = {
+                "last_observed": last_obs.strftime("%Y-%m"),
+                "months_carried_forward": months,
+                "source": "Natural Gas Monthly",
+            }
+            for c in present:
+                df[c] = df[c].ffill()
+
     # -- derived raw metrics --
     if {"crude_stocks", "refinery_inputs"} <= set(df.columns):
         df["crude_days"] = df["crude_stocks"] / df["refinery_inputs"].rolling(4, min_periods=1).mean()
@@ -284,6 +315,7 @@ def build_dataframe(raw, weekly_storage, cfg):
         df["headline"] = (df["oil_subindex"] * w["oil_subindex"]
                            + df["gas_subindex"] * w["gas_subindex"])
 
+    df.attrs["lag_info"] = lag_info
     return df
 
 
@@ -367,6 +399,7 @@ def main():
         "narrative": narrative(df, cfg),
         "failed_series": failed,
         "stale": len(failed) > 0,
+        "component_lags": df.attrs.get("lag_info", {}),
     }
 
     print("\n" + json.dumps(snapshot, indent=2))
