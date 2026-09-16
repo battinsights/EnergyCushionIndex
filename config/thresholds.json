@@ -1,0 +1,86 @@
+{
+  "_meta": {
+    "methodology_version": "1.3",
+    "calibration_window": "2010-01 to 2025-12, frozen",
+    "note": "Any change to a ladder or weight here is a methodological revision. It must be versioned and justified in the methodology document, not edited silently."
+  },
+
+  "weights": {
+    "oil_subindex": 0.5,
+    "gas_subindex": 0.5,
+    "oil_components": {
+      "spare_capacity": 0.3333,
+      "inventory_cover": 0.3333,
+      "refining": 0.3334
+    },
+    "gas_components": {
+      "storage_adequacy": 0.5,
+      "uncommitted_share": 0.5
+    },
+    "inventory_cover_submetrics": {
+      "crude_days": 0.40,
+      "spr_days": 0.30,
+      "oecd_days": 0.30
+    },
+    "refining_submetrics": {
+      "distillate_days": 0.50,
+      "gasoline_days": 0.50
+    }
+  },
+
+  "ladders": {
+    "storage_dev_pct": [[-45, 0], [-30, 20], [-15, 40], [0, 50], [15, 70], [30, 90], [45, 100]],
+    "uncommitted_share": [[0.65, 0], [0.72, 25], [0.79, 50], [0.86, 75], [0.93, 100]],
+    "spare_capacity_pct": [[0, 0], [1, 25], [2.5, 50], [4, 75], [6, 100]],
+    "crude_days": [[18, 0], [22, 25], [27, 50], [32, 75], [38, 100]],
+    "spr_days": [[12, 0], [18, 25], [24, 50], [30, 75], [36, 100]],
+    "oecd_days": [[60, 0], [75, 25], [90, 50], [100, 75], [110, 100]],
+    "distillate_days": [[20, 0], [25, 25], [32, 50], [38, 75], [45, 100]],
+    "gasoline_days": [[22, 0], [24, 25], [27, 50], [30, 75], [33, 100]]
+  },
+
+  "bands": [
+    { "name": "Strained", "min": 0, "max": 25 },
+    { "name": "Tight", "min": 25, "max": 40 },
+    { "name": "Adequate", "min": 40, "max": 60 },
+    { "name": "Comfortable", "min": 60, "max": 100 }
+  ],
+
+  "region_weights": {
+    "_note": "PLACEHOLDER. Must be rebuilt from state-level Natural Gas Monthly January consumption, aggregated to storage regions, before this ships. See methodology Section 4.1.",
+    "east": 0.36,
+    "midwest": 0.27,
+    "mountain": 0.06,
+    "pacific": 0.11,
+    "south_central": 0.20
+  },
+
+  "series": {
+    "crude_stocks":        { "route": "petroleum/stoc/wstk", "id": "WCESTUS1",  "freq": "weekly", "facet": "series" },
+    "spr_stocks":          { "route": "petroleum/stoc/wstk", "id": "WCSSTUS1",  "freq": "weekly", "facet": "series" },
+    "refinery_inputs":     { "route": "petroleum/sum/sndw",  "id": "WCRRIUS2",  "freq": "weekly", "facet": "series" },
+    "distillate_stocks":   { "route": "petroleum/stoc/wstk", "id": "WDISTUS1",  "freq": "weekly", "facet": "series" },
+    "distillate_supplied": { "route": "petroleum/cons/wpsup","id": "WDIUPUS2",  "freq": "weekly", "facet": "series" },
+    "gasoline_stocks":     { "route": "petroleum/stoc/wstk", "id": "WGTSTUS1",  "freq": "weekly", "facet": "series" },
+    "gasoline_supplied":   { "route": "petroleum/cons/wpsup","id": "WGFUPUS2",  "freq": "weekly", "facet": "series" },
+    "refinery_utilization":{ "route": "petroleum/sum/sndw",  "id": "WPULEUS3",  "freq": "weekly", "facet": "series" },
+
+    "opec_surplus_capacity": { "route": "steo", "id": "COPS_OPEC",   "freq": "monthly", "facet": "seriesId" },
+    "world_liquids_demand":  { "route": "steo", "id": "PATC_WORLD",  "freq": "monthly", "facet": "seriesId" },
+    "oecd_stocks":           { "route": "steo", "id": "PASC_OECD_T3","freq": "monthly", "facet": "seriesId" },
+    "oecd_consumption":      { "route": "steo", "id": "PATC_OECD",   "freq": "monthly", "facet": "seriesId" },
+
+    "gas_production":     { "route": "natural-gas/prod/sum", "id": "N9070US2", "freq": "monthly", "facet": "series" },
+    "gas_pipe_imports":   { "route": "natural-gas/move/impc","id": "N9102US2", "freq": "monthly", "facet": "series" },
+    "gas_pipe_exports":   { "route": "natural-gas/move/expc","id": "N9132US2", "freq": "monthly", "facet": "series" },
+    "gas_lng_exports":    { "route": "natural-gas/move/expc","id": "N9133US2", "freq": "monthly", "facet": "series" }
+  },
+
+  "storage_regions": {
+    "east":          "NW2_EPG0_SWO_R31_BCF",
+    "midwest":       "NW2_EPG0_SWO_R32_BCF",
+    "south_central": "NW2_EPG0_SWO_R33_BCF",
+    "mountain":      "NW2_EPG0_SWO_R34_BCF",
+    "pacific":       "NW2_EPG0_SWO_R35_BCF"
+  }
+}
