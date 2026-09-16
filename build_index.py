@@ -55,11 +55,12 @@ DATA_DIR = ROOT / "data"
 def load_config():
     with open(CONFIG_PATH) as f:
         cfg = json.load(f)
-    if "_note" in cfg.get("region_weights", {}):
+    note = cfg.get("region_weights", {}).get("_note", "")
+    if "PLACEHOLDER" in note.upper():
         print("WARNING: region_weights in thresholds.json is still the "
-              "placeholder from development. Rebuild from Natural Gas "
-              "Monthly state-level consumption before trusting gas "
-              "storage adequacy output.", file=sys.stderr)
+              "placeholder from development. Rebuild with "
+              "build_region_weights.py before trusting gas storage "
+              "adequacy output.", file=sys.stderr)
     return cfg
 
 
@@ -70,11 +71,20 @@ def api_key():
     return key
 
 
-def fetch(route, series_id, freq, key, facet="series", start="2009-01-01", retries=3):
+def fetch(route, series_id, freq, key, facet="series", start="2009-01-01", end=None, retries=3):
+    """Pull one series from EIA.
+
+    end defaults to the current month. This matters for STEO, which
+    publishes forecast rows extending roughly two years into the future.
+    The index measures observed physical conditions, not projections, so
+    forecast rows must be excluded rather than silently treated as data.
+    """
+    if end is None:
+        end = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     url = f"{API_ROOT}/{route}/data/"
     params = {
         "api_key": key, "frequency": freq, "data[0]": "value",
-        f"facets[{facet}][]": series_id, "start": start,
+        f"facets[{facet}][]": series_id, "start": start, "end": end,
         "sort[0][column]": "period", "sort[0][direction]": "asc", "length": 5000,
     }
     for attempt in range(retries):
@@ -180,6 +190,17 @@ def fetch_all(cfg, key):
         print(f"\n{len(failed)} series failed to fetch: {failed}", file=sys.stderr)
         print("Affected components will use stale/carried-forward values "
               "if a prior history.csv exists, per the stale-data rule.", file=sys.stderr)
+
+    # Report the last observed period per series. Divergence here is the
+    # signal that one source is lagging others, or that forecast rows have
+    # leaked in. Do not skip reading this.
+    print("\nlast observed period by series:")
+    for name, s in sorted(raw.items()):
+        if len(s):
+            print(f"  {name:24s} {s.index[-1].strftime('%Y-%m')}")
+    for region, s in sorted(weekly_storage.items()):
+        if len(s):
+            print(f"  storage:{region:16s} {s.index[-1].strftime('%Y-%m-%d')}")
 
     return raw, weekly_storage, failed
 

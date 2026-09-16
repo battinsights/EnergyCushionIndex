@@ -47,12 +47,12 @@
   ],
 
   "region_weights": {
-    "_note": "PLACEHOLDER. Must be rebuilt from state-level Natural Gas Monthly January consumption, aggregated to storage regions, before this ships. See methodology Section 4.1.",
-    "east": 0.36,
-    "midwest": 0.27,
-    "mountain": 0.06,
-    "pacific": 0.11,
-    "south_central": 0.20
+    "_note": "January residential plus commercial consumption share, Lower 48, averaged 2015 to 2025. Region mapping verified against EIA storage dashboard definitions. Recompute annually and version. See methodology 4.1.",
+    "east": 0.4052,
+    "midwest": 0.3008,
+    "south_central": 0.1118,
+    "mountain": 0.0924,
+    "pacific": 0.0898
   },
 
   "series": {
