@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-09-23T20:45:53.186355+00:00",
-  "as_of": "2026-08-01",
-  "methodology_version": "1.6",
+  "generated_at": "2026-09-23T20:36:48.090197+00:00",
+  "as_of": "2026-07-01",
+  "methodology_version": "1.5",
   "headline": {
-    "score": 36.0,
+    "score": 34.4,
     "band": "Tight"
   },
   "sub_indices": {
     "oil": {
-      "score": 21.5,
+      "score": 17.8,
       "band": "Strained"
     },
     "gas": {
-      "score": 50.6,
+      "score": 51.1,
       "band": "Adequate"
     }
   },
   "components": {
     "spare_capacity": 0.5,
-    "inventory_cover": 36.6,
-    "refining": 27.4,
-    "storage_adequacy": 57.4,
-    "uncommitted_share": 43.8
+    "inventory_cover": 23.2,
+    "refining": 29.6,
+    "storage_adequacy": 57.9,
+    "uncommitted_share": 44.3
   },
   "component_detail": {
     "spare_capacity": [
@@ -34,12 +34,12 @@
     "inventory_cover": [
       {
         "label": "US commercial crude",
-        "value": 25.0,
+        "value": 24.5,
         "unit": "days of supply"
       },
       {
         "label": "Strategic Petroleum Reserve",
-        "value": 17.1,
+        "value": 18.7,
         "unit": "days of cover"
       },
       {
@@ -56,222 +56,226 @@
       },
       {
         "label": "Gasoline",
-        "value": 23.3,
+        "value": 23.6,
         "unit": "days of supply"
       }
     ],
     "storage_adequacy": [
       {
         "label": "Working gas against the five year average",
-        "value": 5.5,
+        "value": 5.9,
         "unit": "percent deviation"
       }
     ],
     "uncommitted_share": [
       {
         "label": "Supply not committed to export",
-        "value": 0.773,
+        "value": 0.774,
         "unit": "share"
       }
     ]
   },
   "sparkline": [
     {
-      "date": "2024-09",
-      "score": 55.7
-    },
-    {
-      "date": "2024-10",
-      "score": 52.6
-    },
-    {
-      "date": "2024-11",
-      "score": 54.3
-    },
-    {
-      "date": "2024-12",
-      "score": 55.4
-    },
-    {
-      "date": "2025-01",
-      "score": 57.6
-    },
-    {
-      "date": "2025-02",
-      "score": 55.4
-    },
-    {
-      "date": "2025-03",
+      "date": "2024-08",
       "score": 54.0
     },
     {
+      "date": "2024-09",
+      "score": 53.2
+    },
+    {
+      "date": "2024-10",
+      "score": 50.7
+    },
+    {
+      "date": "2024-11",
+      "score": 52.0
+    },
+    {
+      "date": "2024-12",
+      "score": 53.0
+    },
+    {
+      "date": "2025-01",
+      "score": 55.0
+    },
+    {
+      "date": "2025-02",
+      "score": 53.2
+    },
+    {
+      "date": "2025-03",
+      "score": 51.4
+    },
+    {
       "date": "2025-04",
-      "score": 53.7
+      "score": 51.3
     },
     {
       "date": "2025-05",
-      "score": 54.1
+      "score": 51.3
     },
     {
       "date": "2025-06",
-      "score": 51.8
+      "score": 49.5
     },
     {
       "date": "2025-07",
-      "score": 52.7
+      "score": 50.3
     },
     {
       "date": "2025-08",
-      "score": 52.6
-    },
-    {
-      "date": "2025-09",
       "score": 49.8
     },
     {
+      "date": "2025-09",
+      "score": 47.1
+    },
+    {
       "date": "2025-10",
-      "score": 50.0
+      "score": 47.4
     },
     {
       "date": "2025-11",
-      "score": 50.2
+      "score": 47.3
     },
     {
       "date": "2025-12",
-      "score": 50.5
+      "score": 47.9
     },
     {
       "date": "2026-01",
-      "score": 54.9
+      "score": 52.2
     },
     {
       "date": "2026-02",
-      "score": 50.2
+      "score": 47.7
     },
     {
       "date": "2026-03",
-      "score": 42.3
+      "score": 39.5
     },
     {
       "date": "2026-04",
-      "score": 41.5
+      "score": 38.7
     },
     {
       "date": "2026-05",
-      "score": 39.7
+      "score": 36.6
     },
     {
       "date": "2026-06",
-      "score": 37.5
+      "score": 35.1
     },
     {
       "date": "2026-07",
-      "score": 36.8
-    },
-    {
-      "date": "2026-08",
-      "score": 36.0
+      "score": 34.4
     }
   ],
   "sparkline_oil": [
     {
+      "date": "2024-08",
+      "score": 45.6
+    },
+    {
       "date": "2024-09",
-      "score": 52.5
+      "score": 47.4
     },
     {
       "date": "2024-10",
-      "score": 48.1
+      "score": 44.3
     },
     {
       "date": "2024-11",
-      "score": 50.0
+      "score": 45.4
     },
     {
       "date": "2024-12",
-      "score": 53.3
+      "score": 48.7
     },
     {
       "date": "2025-01",
-      "score": 59.1
+      "score": 54.0
     },
     {
       "date": "2025-02",
-      "score": 58.8
+      "score": 54.3
     },
     {
       "date": "2025-03",
-      "score": 56.7
+      "score": 51.5
     },
     {
       "date": "2025-04",
-      "score": 55.5
+      "score": 50.7
     },
     {
       "date": "2025-05",
-      "score": 53.9
+      "score": 48.3
     },
     {
       "date": "2025-06",
-      "score": 47.7
+      "score": 43.1
     },
     {
       "date": "2025-07",
-      "score": 50.4
+      "score": 45.5
     },
     {
       "date": "2025-08",
-      "score": 51.0
+      "score": 45.5
     },
     {
       "date": "2025-09",
-      "score": 45.9
+      "score": 40.6
     },
     {
       "date": "2025-10",
-      "score": 47.1
+      "score": 42.0
     },
     {
       "date": "2025-11",
-      "score": 47.6
+      "score": 41.9
     },
     {
       "date": "2025-12",
-      "score": 50.4
+      "score": 45.3
     },
     {
       "date": "2026-01",
-      "score": 57.4
+      "score": 51.9
     },
     {
       "date": "2026-02",
-      "score": 51.7
+      "score": 46.6
     },
     {
       "date": "2026-03",
-      "score": 35.7
+      "score": 30.2
     },
     {
       "date": "2026-04",
-      "score": 32.3
+      "score": 26.8
     },
     {
       "date": "2026-05",
-      "score": 28.2
+      "score": 22.1
     },
     {
       "date": "2026-06",
-      "score": 24.0
+      "score": 19.1
     },
     {
       "date": "2026-07",
-      "score": 22.5
-    },
-    {
-      "date": "2026-08",
-      "score": 21.5
+      "score": 17.8
     }
   ],
   "sparkline_gas": [
+    {
+      "date": "2024-08",
+      "score": 62.3
+    },
     {
       "date": "2024-09",
       "score": 58.9
@@ -363,20 +367,11 @@
     {
       "date": "2026-07",
       "score": 51.1
-    },
-    {
-      "date": "2026-08",
-      "score": 50.6
     }
   ],
-  "narrative": "Refined product cover fell 2.2 points. Oil inventory cover fell 0.7 points.",
+  "narrative": "Oil inventory cover fell 3.6 points. Gas storage adequacy rose 1.0 points.",
   "comparison_period": "month",
-  "provisional": {
-    "period": "2026-09",
-    "score": 35.2,
-    "band": "Tight",
-    "note": "Month in progress. This figure will change as the remaining weeks are reported and is not a published value."
-  },
+  "provisional": null,
   "source_notes": {
     "spare_capacity": "OPEC spare capacity is an EIA estimate at every vintage rather than an observed statistic, since no underlying historical series exists for it.",
     "steo_lag": "Series drawn from the Short Term Energy Outlook are cut 2 months back, because the most recent STEO months are estimates rather than observations."
@@ -388,16 +383,6 @@
       "last_observed": "2026-06",
       "months_carried_forward": 3,
       "source": "Natural Gas Monthly"
-    },
-    "spare_capacity": {
-      "last_observed": "2026-07",
-      "months_carried_forward": 2,
-      "source": "Short Term Energy Outlook"
-    },
-    "inventory_cover": {
-      "last_observed": "2026-07",
-      "months_carried_forward": 2,
-      "source": "Short Term Energy Outlook"
     }
   }
 }

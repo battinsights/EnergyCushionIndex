@@ -1,0 +1,16 @@
+{
+  "reports": [
+    {
+      "period": "2026-08",
+      "score": 36.0,
+      "band": "Tight",
+      "file": "archive/2026-08.json"
+    },
+    {
+      "period": "2026-07",
+      "score": 34.4,
+      "band": "Tight",
+      "file": "archive/2026-07.json"
+    }
+  ]
+}

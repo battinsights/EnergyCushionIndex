@@ -71,13 +71,31 @@ def api_key():
     return key
 
 
+# STEO publishes three kinds of row: historical, estimate, and forecast.
+# EIA distinguishes them only by shading in the published tables, not in the
+# API, so a date cutoff is the only mechanism available. Modelling for each
+# STEO is completed at the start of its release month, and the most recent
+# months are estimates rather than observations, so STEO series are cut this
+# many months back from the current month. See methodology Section 4.3.
+STEO_ESTIMATE_LAG_MONTHS = 2
+
+
+def months_back(n):
+    """First day of the month n months before the current month."""
+    now = datetime.now(timezone.utc)
+    y, m = now.year, now.month - n
+    while m < 1:
+        m += 12
+        y -= 1
+    return f"{y:04d}-{m:02d}-01"
+
+
 def fetch(route, series_id, freq, key, facet="series", start="2009-01-01", end=None, retries=3):
     """Pull one series from EIA.
 
-    end defaults to the current month. This matters for STEO, which
-    publishes forecast rows extending roughly two years into the future.
-    The index measures observed physical conditions, not projections, so
-    forecast rows must be excluded rather than silently treated as data.
+    end defaults to the current month, which removes STEO forecast rows.
+    STEO series are cut further back by the caller, because the most recent
+    STEO months are EIA estimates rather than observations.
     """
     if end is None:
         end = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -142,8 +160,12 @@ def gas_storage_adequacy(weekly_by_region, weights):
         s = s.copy()
         s.index = pd.to_datetime(s.index)
         d = pd.DataFrame({"value": s})
-        d["week"] = d.index.isocalendar().week.astype(int)
-        d["year"] = d.index.year
+        iso = d.index.isocalendar()
+        d["week"] = iso.week.astype(int)
+        # ISO year, not calendar year. A date such as 30 December 2024 belongs
+        # to ISO week 1 of 2025. Keying it to 2024 would corrupt the same week
+        # five year baseline around every New Year.
+        d["year"] = iso.year.astype(int)
         pivot = d.pivot_table(index="year", columns="week", values="value")
         trailing = pivot.shift(1).rolling(5, min_periods=3).mean()
         dev = []
@@ -168,7 +190,9 @@ def fetch_all(cfg, key):
     for name, spec in cfg["series"].items():
         try:
             print(f"  {name:24s} {spec['id']}")
-            s = fetch(spec["route"], spec["id"], spec["freq"], key, facet=spec["facet"])
+            end = months_back(STEO_ESTIMATE_LAG_MONTHS) if spec["route"] == "steo" else None
+            s = fetch(spec["route"], spec["id"], spec["freq"], key,
+                      facet=spec["facet"], end=end)
             if spec["freq"] == "weekly":
                 s = to_monthly_mean(s)
             raw[name] = s
@@ -224,22 +248,39 @@ def build_dataframe(raw, weekly_storage, cfg):
     # measure: repeating a few months inside a twelve month window moves it
     # very little, which is why it was chosen over the volatile margin ratio.
     lag_info = {}
-    gas_balance = ["gas_production", "gas_pipe_imports",
-                   "gas_pipe_exports", "gas_lng_exports"]
-    present = [c for c in gas_balance if c in df.columns]
-    if present:
+
+    def carry_forward(columns, component, source):
+        """Carry a structurally lagging group forward and record the lag."""
+        present = [c for c in columns if c in df.columns]
+        if not present:
+            return
         last_obs = min(df[c].last_valid_index() for c in present)
         overall_last = df.index.max()
-        if last_obs is not None and overall_last is not None and last_obs < overall_last:
-            months = ((overall_last.year - last_obs.year) * 12
-                      + overall_last.month - last_obs.month)
-            lag_info["uncommitted_share"] = {
-                "last_observed": last_obs.strftime("%Y-%m"),
-                "months_carried_forward": months,
-                "source": "Natural Gas Monthly",
-            }
-            for c in present:
-                df[c] = df[c].ffill()
+        if last_obs is None or overall_last is None or last_obs >= overall_last:
+            return
+        months = ((overall_last.year - last_obs.year) * 12
+                  + overall_last.month - last_obs.month)
+        lag_info[component] = {
+            "last_observed": last_obs.strftime("%Y-%m"),
+            "months_carried_forward": months,
+            "source": source,
+        }
+        for c in present:
+            df[c] = df[c].ffill()
+
+    # Gas balance, from the Natural Gas Monthly, runs about three months behind.
+    carry_forward(["gas_production", "gas_pipe_imports",
+                   "gas_pipe_exports", "gas_lng_exports"],
+                  "uncommitted_share", "Natural Gas Monthly")
+
+    # STEO series are cut two months back to exclude estimates, so they lag the
+    # weekly petroleum data. Both qualify for carry forward under the same rule:
+    # spare capacity and OECD forward cover move slowly, so repeating a small
+    # number of months does not materially distort either. See Section 7.
+    carry_forward(["opec_surplus_capacity", "world_liquids_demand"],
+                  "spare_capacity", "Short Term Energy Outlook")
+    carry_forward(["oecd_stocks", "oecd_consumption"],
+                  "inventory_cover", "Short Term Energy Outlook")
 
     # -- derived raw metrics --
     if {"crude_stocks", "refinery_inputs"} <= set(df.columns):
@@ -319,6 +360,59 @@ def build_dataframe(raw, weekly_storage, cfg):
     return df
 
 
+def series_tail(df, col, n):
+    """Last n non-null values of a column, as date and score pairs."""
+    if col not in df.columns:
+        return []
+    return [{"date": d.strftime("%Y-%m"), "score": round(float(v), 1)}
+            for d, v in df[col].dropna().tail(n).items()]
+
+
+# Raw metric labels and units, for the page's hover detail. Keys are the
+# component names used in the snapshot; each entry lists the underlying
+# metrics that build that component's score.
+DETAIL_MAP = {
+    "spare_capacity": [
+        ("spare_capacity_pct", "OPEC spare capacity", "percent of world demand", 2),
+    ],
+    # Note: OPEC spare capacity has no underlying historical publication. It is
+    # EIA's own estimate at every vintage, not an observation. Disclosed on the
+    # page and in methodology Section 4.3.
+    "inventory_cover": [
+        ("crude_days", "US commercial crude", "days of supply", 1),
+        ("spr_days",   "Strategic Petroleum Reserve", "days of cover", 1),
+        ("oecd_days",  "OECD commercial", "days of forward cover", 1),
+    ],
+    "refining": [
+        ("distillate_days", "Distillate", "days of supply", 1),
+        ("gasoline_days",   "Gasoline",   "days of supply", 1),
+    ],
+    "storage_adequacy": [
+        ("storage_dev_pct", "Working gas against the five year average",
+         "percent deviation", 1),
+    ],
+    "uncommitted_share": [
+        ("uncommitted_share", "Supply not committed to export", "share", 3),
+    ],
+}
+
+
+def component_detail(latest):
+    """Underlying raw metrics for each component, for display on the page."""
+    out = {}
+    for comp, metrics in DETAIL_MAP.items():
+        rows = []
+        for col, label, unit, places in metrics:
+            v = latest.get(col)
+            if v is None or pd.isna(v):
+                continue
+            rows.append({"label": label, "value": round(float(v), places),
+                         "unit": unit})
+        if rows:
+            out[comp] = rows
+    return out
+
+
 def narrative(df, cfg):
     """Largest weighted change, second largest, one contrarian mover."""
     if len(df) < 2:
@@ -329,9 +423,9 @@ def narrative(df, cfg):
     labels = {
         "spare_capacity": "Global spare capacity",
         "inventory_cover": "Oil inventory cover",
-        "refining": "Refining headroom",
+        "refining": "Refined product cover",
         "storage_adequacy": "Gas storage adequacy",
-        "uncommitted_share_final": "Uncommitted gas supply share",
+        "uncommitted_share_final": "Domestically retained supply",
     }
     deltas = {}
     for c in components:
@@ -364,8 +458,36 @@ def main():
     if "headline" not in df.columns or df["headline"].dropna().empty:
         sys.exit("headline could not be computed -- check which series failed above.")
 
-    latest = df.dropna(subset=["headline"]).iloc[-1]
-    latest_date = df.dropna(subset=["headline"]).index[-1]
+    # Closed month rule. The weekly petroleum series accumulate through a
+    # month, so the current month's value changes every time the index is
+    # rebuilt. Publishing that as the headline would mean revising an already
+    # published figure, which methodology Section 7 forbids. The headline
+    # therefore reports the last completed month. The current month is carried
+    # in the output separately and clearly marked provisional, and only closed
+    # months are archived.
+    valid = df.dropna(subset=["headline"])
+    now = datetime.now(timezone.utc)
+    current_period = pd.Timestamp(year=now.year, month=now.month, day=1)
+
+    closed = valid[valid.index < current_period]
+    if closed.empty:
+        sys.exit("no completed month available yet; nothing to publish.")
+
+    latest = closed.iloc[-1]
+    latest_date = closed.index[-1]
+
+    provisional = None
+    if not valid[valid.index >= current_period].empty:
+        prow = valid[valid.index >= current_period].iloc[-1]
+        pdate = valid[valid.index >= current_period].index[-1]
+        provisional = {
+            "period": pdate.strftime("%Y-%m"),
+            "score": round(float(prow["headline"]), 1),
+            "band": band_for(prow["headline"], cfg["bands"]),
+            "note": ("Month in progress. This figure will change as the "
+                     "remaining weeks are reported and is not a published "
+                     "value."),
+        }
 
     snapshot = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -392,11 +514,24 @@ def main():
             "storage_adequacy": round(float(latest.get("storage_adequacy", np.nan)), 1) if pd.notna(latest.get("storage_adequacy")) else None,
             "uncommitted_share": round(float(latest.get("uncommitted_share_final", np.nan)), 1) if pd.notna(latest.get("uncommitted_share_final")) else None,
         },
-        "sparkline": [
-            {"date": d.strftime("%Y-%m"), "score": round(float(v), 1)}
-            for d, v in df["headline"].dropna().tail(24).items()
-        ],
-        "narrative": narrative(df, cfg),
+        # Raw underlying metrics, so the page can show what a score is built
+        # from. A reader who knows the domain finds "28 days of distillate"
+        # more informative than "refining headroom 28.7".
+        "component_detail": component_detail(latest),
+        "sparkline": series_tail(closed, "headline", 24),
+        "sparkline_oil": series_tail(closed, "oil_subindex", 24),
+        "sparkline_gas": series_tail(closed, "gas_subindex", 24),
+        "narrative": narrative(closed, cfg),
+        "comparison_period": "month",
+        "provisional": provisional,
+        "source_notes": {
+            "spare_capacity": ("OPEC spare capacity is an EIA estimate at every "
+                               "vintage rather than an observed statistic, since "
+                               "no underlying historical series exists for it."),
+            "steo_lag": (f"Series drawn from the Short Term Energy Outlook are cut "
+                         f"{STEO_ESTIMATE_LAG_MONTHS} months back, because the most "
+                         f"recent STEO months are estimates rather than observations."),
+        },
         "failed_series": failed,
         "stale": len(failed) > 0,
         "component_lags": df.attrs.get("lag_info", {}),
@@ -416,6 +551,40 @@ def main():
     hist_path = DATA_DIR / "history.csv"
     df.to_csv(hist_path)
     print(f"wrote {hist_path}")
+
+    # Dated snapshot. Published values are never revised, so each month's
+    # snapshot is written once and then left alone. A past report therefore
+    # renders exactly as it did when published, which is what makes it
+    # citable. See methodology Section 7.
+    archive_dir = DATA_DIR / "archive"
+    archive_dir.mkdir(exist_ok=True)
+    stamp = latest_date.strftime("%Y-%m")
+    archive_path = archive_dir / f"{stamp}.json"
+    if archive_path.exists():
+        print(f"archive for {stamp} already exists, left unchanged")
+    else:
+        with open(archive_path, "w") as f:
+            json.dump(snapshot, f, indent=2)
+        print(f"wrote {archive_path}")
+
+    # Index of archived snapshots, newest first, for the page's archive list.
+    entries = []
+    for p in sorted(archive_dir.glob("*.json"), reverse=True):
+        if p.name == "index.json":
+            continue
+        try:
+            snap = json.load(open(p))
+        except Exception:
+            continue
+        entries.append({
+            "period": p.stem,
+            "score": snap.get("headline", {}).get("score"),
+            "band": snap.get("headline", {}).get("band"),
+            "file": f"archive/{p.name}",
+        })
+    with open(archive_dir / "index.json", "w") as f:
+        json.dump({"reports": entries}, f, indent=2)
+    print(f"wrote {archive_dir / 'index.json'} with {len(entries)} reports")
 
 
 if __name__ == "__main__":

@@ -1,20 +1,17 @@
 name: Build index
 
-# Thursday publication, after the Weekly Natural Gas Storage Report.
+# Runs weekly on Thursday. The index itself is published monthly, since the
+# underlying EIA data is monthly, but checking weekly means new data appears
+# as soon as EIA publishes it rather than waiting for a fixed calendar day.
+# The commit step is a no-op when nothing has changed, so extra runs are
+# harmless.
 #
-# GitHub Actions cron is UTC and does not observe daylight saving, so the
-# target of 11:30 ET needs two entries. The job checks the actual Eastern
-# time at runtime and exits early if it is the wrong one for the season,
-# so exactly one of these takes effect in any given week.
-#
-# Actions cron is also best effort and can run late under load. The
-# schedule is set early and the job verifies that the storage report has
-# actually landed before it publishes, rather than trusting the clock.
+# Actions cron is UTC and best effort, so it can run late. Nothing here
+# depends on the exact minute.
 on:
   schedule:
-    - cron: "30 15 * * 4"   # 11:30 ET during daylight saving
-    - cron: "30 16 * * 4"   # 11:30 ET during standard time
-  workflow_dispatch:         # allows a manual run from the Actions tab
+    - cron: "30 16 * * 4"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,21 +22,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Confirm this is the right run for the season
-        if: github.event_name == 'schedule'
-        run: |
-          HOUR=$(TZ=America/New_York date +%H)
-          MINUTE=$(TZ=America/New_York date +%M)
-          echo "Eastern time is ${HOUR}:${MINUTE}"
-          if [ "$HOUR" != "11" ]; then
-            echo "Not 11:00 ET in New York, so this is the off season cron entry. Exiting."
-            exit 78
-          fi
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -53,40 +39,55 @@ jobs:
 
       - name: Report what was produced
         run: |
-          echo "Headline and freshness from this run:"
           python - <<'PY'
           import json
           d = json.load(open("data/index.json"))
-          print("  as of      ", d["as_of"])
-          print("  headline   ", d["headline"]["score"], d["headline"]["band"])
-          print("  oil        ", d["sub_indices"]["oil"]["score"])
-          print("  gas        ", d["sub_indices"]["gas"]["score"])
-          if d.get("failed_series"):
-              print("  FAILED SERIES:", d["failed_series"])
-          if d.get("component_lags"):
-              for k, v in d["component_lags"].items():
-                  print(f"  lag: {k} carried forward {v['months_carried_forward']} months")
+          print("as of      ", d["as_of"])
+          print("headline   ", d["headline"]["score"], d["headline"]["band"])
+          print("oil        ", d["sub_indices"]["oil"]["score"])
+          print("gas        ", d["sub_indices"]["gas"]["score"])
+          for k, v in (d.get("component_lags") or {}).items():
+              print(f"lag        {k}, {v['months_carried_forward']} months carried forward")
           PY
 
-      - name: Fail the run if any series did not return
+      - name: Check the data is fresh and complete
         run: |
           python - <<'PY'
           import json, sys
+          from datetime import date
           d = json.load(open("data/index.json"))
+          problems = []
+
           failed = d.get("failed_series") or []
           if failed:
-              print(f"{len(failed)} series failed: {failed}")
-              print("The index was still written using carried forward values, "
-                    "but this run is marked failed so the problem is visible "
-                    "rather than silently published.")
+              problems.append(f"{len(failed)} series did not return: {failed}")
+
+          # Freshness. Every series can return successfully while EIA has
+          # quietly stopped updating one, which would publish an index that
+          # looks fine and is increasingly out of date. The headline reports
+          # the last completed month, so one month behind is normal, two is
+          # tolerable given reporting lags, three means something has stalled.
+          y, m, _ = map(int, d["as_of"].split("-"))
+          today = date.today()
+          months_behind = (today.year - y) * 12 + today.month - m
+          if months_behind > 3:
+              problems.append(
+                  f"headline is {months_behind} months behind, expected 1 to 2")
+
+          if problems:
+              for p in problems:
+                  print("PROBLEM:", p)
+              print("The index was still written, but this run is marked failed "
+                    "so the problem is visible rather than silently published.")
               sys.exit(1)
+          print(f"data complete, headline {months_behind} month(s) behind, as expected")
           PY
 
       - name: Commit the new values
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/index.json data/history.csv
+          git add data/
           if git diff --staged --quiet; then
             echo "No change in the data, nothing to commit."
           else

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T20:45:53.186355+00:00",
+  "generated_at": "2026-09-23T20:44:13.844761+00:00",
   "as_of": "2026-08-01",
   "methodology_version": "1.6",
   "headline": {
@@ -369,7 +369,7 @@
       "score": 50.6
     }
   ],
-  "narrative": "Refined product cover fell 2.2 points. Oil inventory cover fell 0.7 points.",
+  "narrative": "Refining headroom fell 2.2 points. Oil inventory cover fell 0.7 points.",
   "comparison_period": "month",
   "provisional": {
     "period": "2026-09",
