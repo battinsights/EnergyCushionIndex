@@ -1,6 +1,12 @@
 {
   "reports": [
     {
+      "period": "2026-09",
+      "score": 34.7,
+      "band": "Tight",
+      "file": "archive/2026-09.json"
+    },
+    {
       "period": "2026-08",
       "score": 36.0,
       "band": "Tight",
