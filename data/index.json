@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-10-01T21:19:04.487099+00:00",
+  "generated_at": "2026-10-08T21:27:11.762040+00:00",
   "as_of": "2026-09-01",
   "methodology_version": "1.6",
   "headline": {
-    "score": 34.7,
+    "score": 34.9,
     "band": "Tight"
   },
   "sub_indices": {
     "oil": {
-      "score": 20.2,
+      "score": 20.4,
       "band": "Strained"
     },
     "gas": {
@@ -18,7 +18,7 @@
   },
   "components": {
     "spare_capacity": 0.5,
-    "inventory_cover": 33.2,
+    "inventory_cover": 33.9,
     "refining": 26.9,
     "storage_adequacy": 54.4,
     "uncommitted_share": 44.1
@@ -44,7 +44,7 @@
       },
       {
         "label": "OECD commercial",
-        "value": 58.3,
+        "value": 58.7,
         "unit": "days of forward cover"
       }
     ],
@@ -102,11 +102,11 @@
     },
     {
       "date": "2025-04",
-      "score": 53.7
+      "score": 53.6
     },
     {
       "date": "2025-05",
-      "score": 54.1
+      "score": 54.0
     },
     {
       "date": "2025-06",
@@ -114,7 +114,7 @@
     },
     {
       "date": "2025-07",
-      "score": 52.7
+      "score": 52.6
     },
     {
       "date": "2025-08",
@@ -122,15 +122,15 @@
     },
     {
       "date": "2025-09",
-      "score": 49.8
+      "score": 49.7
     },
     {
       "date": "2025-10",
-      "score": 50.0
+      "score": 49.9
     },
     {
       "date": "2025-11",
-      "score": 50.2
+      "score": 50.1
     },
     {
       "date": "2025-12",
@@ -138,7 +138,7 @@
     },
     {
       "date": "2026-01",
-      "score": 54.9
+      "score": 55.0
     },
     {
       "date": "2026-02",
@@ -146,7 +146,7 @@
     },
     {
       "date": "2026-03",
-      "score": 42.3
+      "score": 42.4
     },
     {
       "date": "2026-04",
@@ -154,11 +154,11 @@
     },
     {
       "date": "2026-05",
-      "score": 39.7
+      "score": 39.6
     },
     {
       "date": "2026-06",
-      "score": 37.5
+      "score": 37.6
     },
     {
       "date": "2026-07",
@@ -166,11 +166,11 @@
     },
     {
       "date": "2026-08",
-      "score": 35.8
+      "score": 35.9
     },
     {
       "date": "2026-09",
-      "score": 34.7
+      "score": 34.9
     }
   ],
   "sparkline_oil": [
@@ -192,7 +192,7 @@
     },
     {
       "date": "2025-02",
-      "score": 58.8
+      "score": 58.6
     },
     {
       "date": "2025-03",
@@ -200,11 +200,11 @@
     },
     {
       "date": "2025-04",
-      "score": 55.5
+      "score": 55.3
     },
     {
       "date": "2025-05",
-      "score": 53.9
+      "score": 53.7
     },
     {
       "date": "2025-06",
@@ -212,7 +212,7 @@
     },
     {
       "date": "2025-07",
-      "score": 50.4
+      "score": 50.2
     },
     {
       "date": "2025-08",
@@ -220,19 +220,19 @@
     },
     {
       "date": "2025-09",
-      "score": 45.9
+      "score": 45.8
     },
     {
       "date": "2025-10",
-      "score": 47.1
+      "score": 46.9
     },
     {
       "date": "2025-11",
-      "score": 47.6
+      "score": 47.4
     },
     {
       "date": "2025-12",
-      "score": 50.4
+      "score": 50.5
     },
     {
       "date": "2026-01",
@@ -244,31 +244,31 @@
     },
     {
       "date": "2026-03",
-      "score": 35.7
+      "score": 35.9
     },
     {
       "date": "2026-04",
-      "score": 32.3
+      "score": 32.5
     },
     {
       "date": "2026-05",
-      "score": 28.2
+      "score": 28.1
     },
     {
       "date": "2026-06",
-      "score": 24.0
+      "score": 24.1
     },
     {
       "date": "2026-07",
-      "score": 22.5
+      "score": 22.4
     },
     {
       "date": "2026-08",
-      "score": 20.8
+      "score": 21.0
     },
     {
       "date": "2026-09",
-      "score": 20.2
+      "score": 20.4
     }
   ],
   "sparkline_gas": [
@@ -371,7 +371,12 @@
   ],
   "narrative": "Gas storage adequacy fell 2.9 points. Oil inventory cover fell 1.2 points.",
   "comparison_period": "month",
-  "provisional": null,
+  "provisional": {
+    "period": "2026-10",
+    "score": 34.3,
+    "band": "Tight",
+    "note": "Month in progress. This figure will change as the remaining weeks are reported and is not a published value."
+  },
   "source_notes": {
     "spare_capacity": "OPEC spare capacity is an EIA estimate at every vintage rather than an observed statistic, since no underlying historical series exists for it.",
     "steo_lag": "Series drawn from the Short Term Energy Outlook are cut 2 months back, because the most recent STEO months are estimates rather than observations."
@@ -381,17 +386,17 @@
   "component_lags": {
     "uncommitted_share": {
       "last_observed": "2026-07",
-      "months_carried_forward": 2,
+      "months_carried_forward": 3,
       "source": "Natural Gas Monthly"
     },
     "spare_capacity": {
       "last_observed": "2026-08",
-      "months_carried_forward": 1,
+      "months_carried_forward": 2,
       "source": "Short Term Energy Outlook"
     },
     "inventory_cover": {
       "last_observed": "2026-08",
-      "months_carried_forward": 1,
+      "months_carried_forward": 2,
       "source": "Short Term Energy Outlook"
     }
   }
