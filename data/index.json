@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T20:00:21.577270+00:00",
+  "generated_at": "2026-10-22T20:15:49.442218+00:00",
   "as_of": "2026-09-01",
   "methodology_version": "1.6",
   "headline": {
@@ -373,7 +373,7 @@
   "comparison_period": "month",
   "provisional": {
     "period": "2026-10",
-    "score": 34.2,
+    "score": 34.0,
     "band": "Tight",
     "note": "Month in progress. This figure will change as the remaining weeks are reported and is not a published value."
   },
