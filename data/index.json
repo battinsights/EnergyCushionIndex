@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-10-29T21:21:27.133808+00:00",
-  "as_of": "2026-09-01",
+  "generated_at": "2026-11-05T22:12:54.601616+00:00",
+  "as_of": "2026-10-01",
   "methodology_version": "1.6",
   "headline": {
-    "score": 34.9,
+    "score": 33.7,
     "band": "Tight"
   },
   "sub_indices": {
     "oil": {
-      "score": 20.4,
+      "score": 19.3,
       "band": "Strained"
     },
     "gas": {
-      "score": 49.3,
+      "score": 48.2,
       "band": "Adequate"
     }
   },
   "components": {
     "spare_capacity": 0.5,
-    "inventory_cover": 33.9,
-    "refining": 26.9,
-    "storage_adequacy": 54.4,
-    "uncommitted_share": 44.1
+    "inventory_cover": 31.8,
+    "refining": 25.7,
+    "storage_adequacy": 52.1,
+    "uncommitted_share": 44.2
   },
   "component_detail": {
     "spare_capacity": [
@@ -34,7 +34,7 @@
     "inventory_cover": [
       {
         "label": "US commercial crude",
-        "value": 24.8,
+        "value": 24.3,
         "unit": "days of supply"
       },
       {
@@ -44,26 +44,26 @@
       },
       {
         "label": "OECD commercial",
-        "value": 58.7,
+        "value": 58.0,
         "unit": "days of forward cover"
       }
     ],
     "refining": [
       {
         "label": "Distillate",
-        "value": 28.8,
+        "value": 27.0,
         "unit": "days of supply"
       },
       {
         "label": "Gasoline",
-        "value": 23.2,
+        "value": 23.5,
         "unit": "days of supply"
       }
     ],
     "storage_adequacy": [
       {
         "label": "Working gas against the five year average",
-        "value": 3.3,
+        "value": 1.6,
         "unit": "percent deviation"
       }
     ],
@@ -76,10 +76,6 @@
     ]
   },
   "sparkline": [
-    {
-      "date": "2024-10",
-      "score": 52.6
-    },
     {
       "date": "2024-11",
       "score": 54.3
@@ -170,14 +166,14 @@
     },
     {
       "date": "2026-09",
-      "score": 34.9
+      "score": 34.7
+    },
+    {
+      "date": "2026-10",
+      "score": 33.7
     }
   ],
   "sparkline_oil": [
-    {
-      "date": "2024-10",
-      "score": 48.1
-    },
     {
       "date": "2024-11",
       "score": 50.0
@@ -268,14 +264,14 @@
     },
     {
       "date": "2026-09",
-      "score": 20.4
+      "score": 20.0
+    },
+    {
+      "date": "2026-10",
+      "score": 19.3
     }
   ],
   "sparkline_gas": [
-    {
-      "date": "2024-10",
-      "score": 57.2
-    },
     {
       "date": "2024-11",
       "score": 58.5
@@ -367,16 +363,15 @@
     {
       "date": "2026-09",
       "score": 49.3
+    },
+    {
+      "date": "2026-10",
+      "score": 48.2
     }
   ],
-  "narrative": "Gas storage adequacy fell 2.9 points. Oil inventory cover fell 1.2 points.",
+  "narrative": "Gas storage adequacy fell 2.3 points. Refined product cover fell 1.2 points.",
   "comparison_period": "month",
-  "provisional": {
-    "period": "2026-10",
-    "score": 34.0,
-    "band": "Tight",
-    "note": "Month in progress. This figure will change as the remaining weeks are reported and is not a published value."
-  },
+  "provisional": null,
   "source_notes": {
     "spare_capacity": "OPEC spare capacity is an EIA estimate at every vintage rather than an observed statistic, since no underlying historical series exists for it.",
     "steo_lag": "Series drawn from the Short Term Energy Outlook are cut 2 months back, because the most recent STEO months are estimates rather than observations."
@@ -385,18 +380,18 @@
   "stale": false,
   "component_lags": {
     "uncommitted_share": {
-      "last_observed": "2026-07",
-      "months_carried_forward": 3,
+      "last_observed": "2026-08",
+      "months_carried_forward": 2,
       "source": "Natural Gas Monthly"
     },
     "spare_capacity": {
-      "last_observed": "2026-08",
-      "months_carried_forward": 2,
+      "last_observed": "2026-09",
+      "months_carried_forward": 1,
       "source": "Short Term Energy Outlook"
     },
     "inventory_cover": {
-      "last_observed": "2026-08",
-      "months_carried_forward": 2,
+      "last_observed": "2026-09",
+      "months_carried_forward": 1,
       "source": "Short Term Energy Outlook"
     }
   }
