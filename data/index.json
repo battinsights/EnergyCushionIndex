@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-11-05T22:12:54.601616+00:00",
+  "generated_at": "2026-11-12T22:25:12.513675+00:00",
   "as_of": "2026-10-01",
   "methodology_version": "1.6",
   "headline": {
-    "score": 33.7,
+    "score": 34.1,
     "band": "Tight"
   },
   "sub_indices": {
     "oil": {
-      "score": 19.3,
+      "score": 20.1,
       "band": "Strained"
     },
     "gas": {
@@ -18,7 +18,7 @@
   },
   "components": {
     "spare_capacity": 0.5,
-    "inventory_cover": 31.8,
+    "inventory_cover": 34.2,
     "refining": 25.7,
     "storage_adequacy": 52.1,
     "uncommitted_share": 44.2
@@ -44,7 +44,7 @@
       },
       {
         "label": "OECD commercial",
-        "value": 58.0,
+        "value": 59.4,
         "unit": "days of forward cover"
       }
     ],
@@ -146,31 +146,31 @@
     },
     {
       "date": "2026-04",
-      "score": 41.5
+      "score": 41.6
     },
     {
       "date": "2026-05",
-      "score": 39.6
+      "score": 39.5
     },
     {
       "date": "2026-06",
-      "score": 37.6
+      "score": 37.5
     },
     {
       "date": "2026-07",
-      "score": 36.9
+      "score": 37.1
     },
     {
       "date": "2026-08",
-      "score": 35.9
+      "score": 36.2
     },
     {
       "date": "2026-09",
-      "score": 34.7
+      "score": 35.1
     },
     {
       "date": "2026-10",
-      "score": 33.7
+      "score": 34.1
     }
   ],
   "sparkline_oil": [
@@ -248,27 +248,27 @@
     },
     {
       "date": "2026-05",
-      "score": 28.1
+      "score": 28.0
     },
     {
       "date": "2026-06",
-      "score": 24.1
+      "score": 24.0
     },
     {
       "date": "2026-07",
-      "score": 22.4
+      "score": 22.8
     },
     {
       "date": "2026-08",
-      "score": 21.0
+      "score": 21.4
     },
     {
       "date": "2026-09",
-      "score": 20.0
+      "score": 20.8
     },
     {
       "date": "2026-10",
-      "score": 19.3
+      "score": 20.1
     }
   ],
   "sparkline_gas": [
@@ -381,17 +381,17 @@
   "component_lags": {
     "uncommitted_share": {
       "last_observed": "2026-08",
-      "months_carried_forward": 2,
+      "months_carried_forward": 3,
       "source": "Natural Gas Monthly"
     },
     "spare_capacity": {
       "last_observed": "2026-09",
-      "months_carried_forward": 1,
+      "months_carried_forward": 2,
       "source": "Short Term Energy Outlook"
     },
     "inventory_cover": {
       "last_observed": "2026-09",
-      "months_carried_forward": 1,
+      "months_carried_forward": 2,
       "source": "Short Term Energy Outlook"
     }
   }
