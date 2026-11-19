@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T22:25:12.513675+00:00",
+  "generated_at": "2026-11-19T23:10:30.907671+00:00",
   "as_of": "2026-10-01",
   "methodology_version": "1.6",
   "headline": {
@@ -371,7 +371,12 @@
   ],
   "narrative": "Gas storage adequacy fell 2.3 points. Refined product cover fell 1.2 points.",
   "comparison_period": "month",
-  "provisional": null,
+  "provisional": {
+    "period": "2026-11",
+    "score": 35.5,
+    "band": "Tight",
+    "note": "Month in progress. This figure will change as the remaining weeks are reported and is not a published value."
+  },
   "source_notes": {
     "spare_capacity": "OPEC spare capacity is an EIA estimate at every vintage rather than an observed statistic, since no underlying historical series exists for it.",
     "steo_lag": "Series drawn from the Short Term Energy Outlook are cut 2 months back, because the most recent STEO months are estimates rather than observations."
